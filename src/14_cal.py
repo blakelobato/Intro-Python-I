@@ -30,3 +30,41 @@ it should use today’s date to get the month and year.
 import sys
 import calendar
 from datetime import datetime
+import argparse
+
+def cal_func(month, year):
+  if not month and not year:
+    return calendar.TextCalendar().formatmonth(datetime.today().year, datetime.today().month)
+  elif month and not year:
+    month = int(month)
+    year = datetime.today().year
+  elif year and not month:
+    month = datetime.today().month
+    year = int(year)
+  else:
+    try:
+      month = int(month)
+    except Exception as e:
+      if e in (TypeError, NameError):
+        month = datetime.today().month
+    try:
+      year = int(year)
+    except Exception as e:
+      if e in (TypeError, NameError, SyntaxError):
+        year = datetime.today().year
+  try:
+    return calendar.TextCalendar().formatmonth(year, month)
+  except Exception as e:
+    print(e)
+    print('Please make sure your input conforms to the following:')
+    print('-m=int -y=int')
+
+parser = argparse.ArgumentParser(description="""
+This shows a calendar for the month and year: By default, if no arguments are provided, it will return the current month's calendar.""")
+
+parser.add_argument("--month", "-m", help="takes an integer, 0-12")
+parser.add_argument("--year", "-y", help="takes an integer, any year")
+month = parser.parse_args().month
+year = parser.parse_args().year
+
+print(cal_func(month, year))
